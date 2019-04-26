@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">project_2</string>
+    <string name="menu_people">developers</string>
+    <string name="people_message">M Karrabi\nH Ahmadzadeh\nM Ghadimi</string>
+    <string name="people_title">developers</string>
+    <string name="ok">ok</string>
+    <string name="grid_on">grid show</string>
 </resources>
