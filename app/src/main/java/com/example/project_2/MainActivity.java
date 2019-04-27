@@ -2,12 +2,9 @@ package com.example.project_2;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,9 +17,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Observer {
 
     private ViewStub viewStubGrid;
     private ViewStub viewStubList;
@@ -42,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        NotificationCenter.getNotificationCenter().registerForData(this);
 
         mydatabase = openOrCreateDatabase("your database name",MODE_PRIVATE,null);
         mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Post(userID int, id int, title VARCHAR, body VARCHAR, PRIMARY KEY(id));");
@@ -89,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getPostList() {
+//        posts.add(new Post(1, 2, "1", "2"));
         ConnectivityManager ConnectionManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         MessageController.getMessageController(getBaseContext()).getPosts(ConnectionManager, mydatabase);
     }
@@ -140,8 +138,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//TODO
+
         }
     };
 
+    @Override
+    public void update() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (gridViewAdapter != null)
+                    gridViewAdapter.notifyDataSetChanged();
+                if (listViewAdapter != null)
+                    listViewAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 }

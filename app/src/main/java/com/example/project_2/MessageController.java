@@ -58,19 +58,20 @@ public class MessageController {
             cloudExecutorService.submit(new Runnable() {
                 @Override
                 public void run() {
-                    ArrayList<Post> posts = ConnectionManager.getConnectionManager().loadPost();
+                    posts.clear();
+                    posts.addAll(ConnectionManager.getConnectionManager().loadPosts());
 
-                    NotificationCenter.getNotificationCenter().data_loaded();
                     StorageManager.getStorageManager().savePost(posts, mydatabase);
                     lastUpdateTime = System.currentTimeMillis();
+                    NotificationCenter.getNotificationCenter().data_loaded();
                 }
             });
         } else {
             storageExecutorService.submit(new Runnable() {
                 @Override
                 public void run() {
-
-                    posts = StorageManager.getStorageManager().loadPosts(mydatabase);
+                    posts.clear();
+                    posts.addAll(StorageManager.getStorageManager().loadPosts(mydatabase));
 
                     NotificationCenter.getNotificationCenter().data_loaded();
                 }
@@ -78,17 +79,17 @@ public class MessageController {
         }
     }
 
-//    public ArrayList<Comment> getComments(int i, ConnectivityManager ConnectionManager) {
-//        NetworkInfo networkInfo=ConnectionManager.getActiveNetworkInfo();
-//        if(networkInfo != null && networkInfo.isConnected() && System.currentTimeMillis() - lastUpdateTime > 300_000){
-//
-//            lastUpdateTime = System.currentTimeMillis();
-//        } else {
-//
-//        }
-//
-//        return comments;
-//    }
+    public ArrayList<Comment> getComments(int i, ConnectivityManager ConnectionManager) {
+        NetworkInfo networkInfo=ConnectionManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected() && System.currentTimeMillis() - lastUpdateTime > 300_000){
+
+            lastUpdateTime = System.currentTimeMillis();
+        } else {
+
+        }
+
+        return comments;
+    }
 
 
 

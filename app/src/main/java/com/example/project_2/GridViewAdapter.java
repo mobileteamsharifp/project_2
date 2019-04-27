@@ -12,8 +12,10 @@ import android.widget.TextView;
 import java.util.List;
 
 public class GridViewAdapter extends ArrayAdapter<Post> {
+    private List<Post> data;
     public GridViewAdapter(@NonNull Context context, int resource, @NonNull List<Post> objects) {
         super(context, resource, objects);
+        data = objects;
     }
 
     @NonNull

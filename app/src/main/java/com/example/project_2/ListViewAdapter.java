@@ -14,8 +14,10 @@ import android.widget.TextView;
 import java.util.List;
 
 public class ListViewAdapter extends ArrayAdapter<Post> {
+    private List<Post> data;
     public ListViewAdapter(Context context, int resource, List<Post> objects) {
         super(context, resource, objects);
+        data = objects;
     }
 
     @NonNull

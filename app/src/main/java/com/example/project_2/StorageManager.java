@@ -53,7 +53,8 @@ public class StorageManager {
             String title = posts.get(i).getTitle();
             String body = posts.get(i).getBody();
             mydatabase.execSQL("delete from Post where id = " + id);
-            mydatabase.execSQL("INSERT INTO Post VALUES(" + userID + id + title + body + ");");
+            String q = "INSERT INTO Post VALUES(" + userID + "," + id + ",\"" + title + "\",\"" + body + "\");";
+            mydatabase.execSQL(q);
         }
     }
 
