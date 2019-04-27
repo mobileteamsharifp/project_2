@@ -1,9 +1,12 @@
 package com.example.project_2;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private GridView gridView;
     private ListViewAdapter listViewAdapter;
     private GridViewAdapter gridViewAdapter;
-    private ArrayList<Post> posts;
     int currentMode = VIEW_MODE_LIST_VIEW;
+    SQLiteDatabase mydatabase;
     MenuItem grid_list_item;
 
 
@@ -39,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mydatabase = openOrCreateDatabase("your database name",MODE_PRIVATE,null);
+        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Post(userID int, id int, title VARCHAR, body VARCHAR, PRIMARY KEY(id));");
+        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Comment(postId int, id int, name VARCHAR, mail VARCHAR, body VARCHAR, foreign key(postId) REFERENCES Post(id), PRIMARY KEY(id, postId));");
 
         viewStubList = findViewById(R.id.listStub);
         viewStubGrid = findViewById(R.id.gridStub);
@@ -73,25 +80,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void setAdapters() {
         if (currentMode == VIEW_MODE_LIST_VIEW){
-            listViewAdapter = new ListViewAdapter(this, R.layout.list_item, posts);
+            listViewAdapter = new ListViewAdapter(this, R.layout.list_item, MessageController.getMessageController(getBaseContext()).posts);
             listView.setAdapter(listViewAdapter);
         } else {
-            gridViewAdapter = new GridViewAdapter(this, R.layout.grid_item, posts);
+            gridViewAdapter = new GridViewAdapter(this, R.layout.grid_item, MessageController.getMessageController(getBaseContext()).posts);
             gridView.setAdapter(gridViewAdapter);
         }
     }
 
     private void getPostList() {
-        ArrayList<Post> posts = new ArrayList<>();
-        posts.add(new Post(1, 1, "n1", "1ksdghfjdsdjghdfg"));
-        posts.add(new Post(1, 2, "n2", "2kfjglksfhglfkshgrlgkjshg"));
-        posts.add(new Post(1, 3, "n3", "3swkurhglsjfxhgliurekgsh;rkugjhr"));
-        posts.add(new Post(1, 4, "n4", "4keshgkjhlkjrhglksuh"));
-        posts.add(new Post(1, 5, "n5", "5kwjshkhgr"));
-        posts.add(new Post(1, 6, "n6", "6kesrhgkjhseglrukhgjfklshglkjfhg"));
-        posts.add(new Post(1, 7, "n7", "7skjehgkjslrgrklsgjh"));
-
-        this.posts = posts;
+        ConnectivityManager ConnectionManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        MessageController.getMessageController(getBaseContext()).getPosts(ConnectionManager, mydatabase);
     }
 
     @Override
