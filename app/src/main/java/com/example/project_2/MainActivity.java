@@ -2,12 +2,12 @@ package com.example.project_2;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,6 +16,13 @@ import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
+
+import com.example.project_2.back.MessageController;
+import com.example.project_2.back.NotificationCenter;
+import com.example.project_2.back.Observer;
+import com.example.project_2.front1.DeveloperDialog;
+import com.example.project_2.front1.GridViewAdapter;
+import com.example.project_2.front1.ListViewAdapter;
 
 public class MainActivity extends AppCompatActivity implements Observer {
 
@@ -29,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
     SQLiteDatabase mydatabase;
     MenuItem grid_list_item;
 
-
+    public static final String EXTRA_MESSAGE = "com.example.project_2.NUM_OF_COMMENT.MESSAGE";
     static final int VIEW_MODE_LIST_VIEW = 0;
     static final int VIEW_MODE_GRID_VIEW = 1;
 
@@ -40,7 +47,9 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
         NotificationCenter.getNotificationCenter().registerForData(this);
 
-        mydatabase = openOrCreateDatabase("your database name",MODE_PRIVATE,null);
+        mydatabase = openOrCreateDatabase("myDataBase",MODE_PRIVATE,null);
+//        mydatabase.execSQL("drop table Post;");
+//        mydatabase.execSQL("drop table Comment;");
         mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Post(userID int, id int, title VARCHAR, body VARCHAR, PRIMARY KEY(id));");
         mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Comment(postId int, id int, name VARCHAR, mail VARCHAR, body VARCHAR, foreign key(postId) REFERENCES Post(id), PRIMARY KEY(id, postId));");
 
@@ -86,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements Observer {
     }
 
     private void getPostList() {
-//        posts.add(new Post(1, 2, "1", "2"));
         ConnectivityManager ConnectionManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         MessageController.getMessageController(getBaseContext()).getPosts(ConnectionManager, mydatabase);
     }
@@ -138,9 +146,15 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+            launchSecondActivity(position);
         }
     };
+
+    public void launchSecondActivity(int numOfData){
+        Intent intent = new Intent(this, Main2Activity.class);
+        intent.putExtra(EXTRA_MESSAGE, String.valueOf(numOfData));
+        startActivity(intent);
+    }
 
     @Override
     public void update() {

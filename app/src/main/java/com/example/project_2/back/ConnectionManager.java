@@ -1,6 +1,4 @@
-package com.example.project_2;
-
-import android.util.Log;
+package com.example.project_2.back;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;// TODO هیچی درست نیست
+import java.util.ArrayList;
 
 public class ConnectionManager {
     private static ConnectionManager connectionManager;
@@ -27,20 +25,14 @@ public class ConnectionManager {
 
         String text = getUrlText(siteaddr);
 
-        ArrayList<String> stringArray = new ArrayList<String>();
-
         JSONArray jsonArray = null;
         try {
             jsonArray = new JSONArray(text);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                stringArray.add(jsonArray.getString(i));
-            }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        Post post = null;
+        Post post;
         try {
             assert jsonArray != null;
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -51,7 +43,6 @@ public class ConnectionManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        posts.add(post);
 
         return posts;
     }
@@ -90,4 +81,33 @@ public class ConnectionManager {
 
 
     private ConnectionManager(){}
+
+    public ArrayList<Comment> loadComments(int numOfComment) {
+
+        ArrayList<Comment> comments = new ArrayList<>();
+        String siteaddr = "https://jsonplaceholder.typicode.com/posts/" + numOfComment + "/comments";
+
+        String text = getUrlText(siteaddr);
+
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = new JSONArray(text);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Comment comment = null;
+        try {
+            assert jsonArray != null;
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject o = (JSONObject) jsonArray.get(i);
+                comment = new Comment((Integer) o.get("postId"), (Integer) o.get("id"), (String) o.get("name"), (String) o.get("email"), (String) o.get("body"));
+                comments.add(comment);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return comments;
+    }
 }

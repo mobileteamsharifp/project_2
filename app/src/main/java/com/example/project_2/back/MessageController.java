@@ -1,34 +1,21 @@
-package com.example.project_2;
+package com.example.project_2.back;
 
 
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.Time;
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MessageController {
     private static MessageController messageController;
-    ArrayList<Post> posts = new ArrayList<>();
+    public ArrayList<Post> posts = new ArrayList<>();
     private long lastUpdateTime = 0;
-    ArrayList<Comment> comments = new ArrayList<>();
+    public ArrayList<Comment> comments = new ArrayList<>();
     private static Context context;
     private ExecutorService cloudExecutorService =  Executors.newSingleThreadExecutor();
     private ExecutorService storageExecutorService = Executors.newSingleThreadExecutor();
@@ -79,13 +66,35 @@ public class MessageController {
         }
     }
 
-    public ArrayList<Comment> getComments(int i, ConnectivityManager ConnectionManager) {
-        NetworkInfo networkInfo=ConnectionManager.getActiveNetworkInfo();
-        if(networkInfo != null && networkInfo.isConnected() && System.currentTimeMillis() - lastUpdateTime > 300_000){
+    public ArrayList<Comment> getComments(final int i, final ConnectivityManager connectivityManager, final SQLiteDatabase mydatabase) {
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
-            lastUpdateTime = System.currentTimeMillis();
+        Cursor resultSet = mydatabase.rawQuery("select * from Comment where postId = " + i + ";", null);
+        boolean a = networkInfo.isConnected();
+        Long aaa = System.currentTimeMillis() - lastUpdateTime;
+        int aaaaa = resultSet.getCount();
+        if(networkInfo != null && networkInfo.isConnected() && (System.currentTimeMillis() - lastUpdateTime > 300_000 || resultSet.getCount() <= 0)){
+            cloudExecutorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    comments.clear();
+                    comments.addAll(ConnectionManager.getConnectionManager().loadComments(i));
+
+                    StorageManager.getStorageManager().saveComments(i, comments, mydatabase);
+                    lastUpdateTime = System.currentTimeMillis();
+                    NotificationCenter.getNotificationCenter().comments_loaded();
+                }
+            });
         } else {
+            storageExecutorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                comments.clear();
+                comments.addAll(StorageManager.getStorageManager().loadComments(mydatabase));
 
+                NotificationCenter.getNotificationCenter().comments_loaded();
+                }
+            });
         }
 
         return comments;

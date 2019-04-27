@@ -1,4 +1,4 @@
-package com.example.project_2;
+package com.example.project_2.front1;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -12,10 +12,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.example.project_2.R;
+
 import java.util.Objects;
 
 @SuppressLint("ValidFragment")
-class DeveloperDialog extends DialogFragment {
+public class DeveloperDialog extends DialogFragment {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @NonNull
     @Override

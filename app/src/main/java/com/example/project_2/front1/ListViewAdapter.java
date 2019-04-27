@@ -1,4 +1,4 @@
-package com.example.project_2;
+package com.example.project_2.front1;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,11 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.project_2.R;
+import com.example.project_2.back.Post;
+
 import java.util.List;
 
-public class GridViewAdapter extends ArrayAdapter<Post> {
+public class ListViewAdapter extends ArrayAdapter<Post> {
     private List<Post> data;
-    public GridViewAdapter(@NonNull Context context, int resource, @NonNull List<Post> objects) {
+    public ListViewAdapter(Context context, int resource, List<Post> objects) {
         super(context, resource, objects);
         data = objects;
     }
@@ -25,7 +28,7 @@ public class GridViewAdapter extends ArrayAdapter<Post> {
 
         if (view == null){
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.grid_item, null);
+            view = inflater.inflate(R.layout.list_item, null);
         }
 
         Post post = getItem(position);

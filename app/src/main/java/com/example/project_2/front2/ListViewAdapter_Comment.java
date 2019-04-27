@@ -1,4 +1,4 @@
-package com.example.project_2;
+package com.example.project_2.front2;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,17 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.project_2.R;
+import com.example.project_2.back.Comment;
+import com.example.project_2.back.Post;
 
 import java.util.List;
 
-public class ListViewAdapter extends ArrayAdapter<Post> {
-    private List<Post> data;
-    public ListViewAdapter(Context context, int resource, List<Post> objects) {
+public class ListViewAdapter_Comment extends ArrayAdapter<Comment> {
+    public ListViewAdapter_Comment(Context context, int resource, List<Comment> objects) {
         super(context, resource, objects);
-        data = objects;
     }
 
     @NonNull
@@ -30,13 +30,13 @@ public class ListViewAdapter extends ArrayAdapter<Post> {
             view = inflater.inflate(R.layout.list_item, null);
         }
 
-        Post post = getItem(position);
+        Comment comment = getItem(position);
         TextView title = view.findViewById(R.id.textViewTitle);
         TextView body = view.findViewById(R.id.textViewBody);
 
-        assert post != null;
-        title.setText(post.getTitle());
-        body.setText(post.getBody());
+        assert comment != null;
+        title.setText(comment.getName());
+        body.setText(comment.getBody());
 
         return view;
     }
