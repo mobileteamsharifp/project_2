@@ -85,7 +85,8 @@ public class ConnectionManager {
     public ArrayList<Comment> loadComments(int numOfComment) {
 
         ArrayList<Comment> comments = new ArrayList<>();
-        String siteaddr = "https://jsonplaceholder.typicode.com/posts/" + numOfComment + "/comments";
+        String siteaddr = "https://jsonplaceholder.typicode.com/comments?postId=" + (numOfComment + 1);
+
 
         String text = getUrlText(siteaddr);
 

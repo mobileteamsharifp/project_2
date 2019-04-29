@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
         NotificationCenter.getNotificationCenter().registerForData(this);
 
         mydatabase = openOrCreateDatabase("myDataBase",MODE_PRIVATE,null);
-//        mydatabase.execSQL("drop table Post;");
-//        mydatabase.execSQL("drop table Comment;");
+//        mydatabase.execSQL("drop table if exists Post;");
+//        mydatabase.execSQL("drop table if exists Comment;");
         mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Post(userID int, id int, title VARCHAR, body VARCHAR, PRIMARY KEY(id));");
         mydatabase.execSQL("CREATE TABLE IF NOT EXISTS Comment(postId int, id int, name VARCHAR, mail VARCHAR, body VARCHAR, foreign key(postId) REFERENCES Post(id), PRIMARY KEY(id, postId));");
 

@@ -56,8 +56,8 @@ public class StorageManager {
 
     }
 
-    public ArrayList<Comment> loadComments(SQLiteDatabase mydatabase) {
-        @SuppressLint("Recycle") Cursor resultSet = mydatabase.rawQuery("select * from Comment;", null);
+    public ArrayList<Comment> loadComments(int ii, SQLiteDatabase mydatabase) {
+        @SuppressLint("Recycle") Cursor resultSet = mydatabase.rawQuery("select * from Comment where postId = " + (ii+1) + ";", null);
 
         ArrayList<Comment> comments = new ArrayList<>();
 
@@ -74,10 +74,11 @@ public class StorageManager {
         return comments;
     }
 
-    public void saveComments(int pid, ArrayList<Comment> comments, SQLiteDatabase mydatabase) {
+    public void saveComments(ArrayList<Comment> comments, SQLiteDatabase mydatabase) {
         for (int i = 0; i < comments.size(); i++) {
             String body = comments.get(i).getBody();
             String id = Integer.toString(comments.get(i).getId());
+            String pid = Integer.toString(comments.get(i).getPostId());
             String mail = comments.get(i).getMail();
             String name = comments.get(i).getName();
             mydatabase.execSQL("delete from Comment where (id = " + id + " and " + " postId = " + pid + ");");

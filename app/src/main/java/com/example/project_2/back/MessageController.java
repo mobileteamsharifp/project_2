@@ -69,10 +69,7 @@ public class MessageController {
     public ArrayList<Comment> getComments(final int i, final ConnectivityManager connectivityManager, final SQLiteDatabase mydatabase) {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
-        Cursor resultSet = mydatabase.rawQuery("select * from Comment where postId = " + i + ";", null);
-        boolean a = networkInfo.isConnected();
-        Long aaa = System.currentTimeMillis() - lastUpdateTime;
-        int aaaaa = resultSet.getCount();
+        Cursor resultSet = mydatabase.rawQuery("select * from Comment where postId = " + (i+1) + ";", null);
         if(networkInfo != null && networkInfo.isConnected() && (System.currentTimeMillis() - lastUpdateTime > 300_000 || resultSet.getCount() <= 0)){
             cloudExecutorService.submit(new Runnable() {
                 @Override
@@ -80,7 +77,7 @@ public class MessageController {
                     comments.clear();
                     comments.addAll(ConnectionManager.getConnectionManager().loadComments(i));
 
-                    StorageManager.getStorageManager().saveComments(i, comments, mydatabase);
+                    StorageManager.getStorageManager().saveComments(comments, mydatabase);
                     lastUpdateTime = System.currentTimeMillis();
                     NotificationCenter.getNotificationCenter().comments_loaded();
                 }
@@ -90,7 +87,7 @@ public class MessageController {
                 @Override
                 public void run() {
                 comments.clear();
-                comments.addAll(StorageManager.getStorageManager().loadComments(mydatabase));
+                comments.addAll(StorageManager.getStorageManager().loadComments(i, mydatabase));
 
                 NotificationCenter.getNotificationCenter().comments_loaded();
                 }
